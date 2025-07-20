@@ -1,0 +1,81 @@
+{
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Glog.AI",
+          "organization": "Glog.AI",
+          "fullName": "Glog, Making software more secure",
+          "version": "1.0.0",
+          "semanticVersion": "1.0.0",
+          "informationUri": "https://www.glog.ai",
+          "rules": [
+            {
+              "id": "glog-6cf1915f-0b7b-4e6b-bbf3-72ee01ef6a1a",
+              "help": {
+                "text": "",
+                "markdown": "### Description\n\nThe \"Potential Connectivity to All Interfaces\" vulnerability arises when a server application is configured to listen on all network interfaces (`0.0.0.0`). This can expose the application to external networks, potentially allowing unauthorized access. In the context of Python applications, this vulnerability can occur when the server's default binding address is set to `0.0.0.0`, especially in environments like Docker where the application might be exposed to broader network access than intended.\n\n### Mitigation Advice\n\nTo mitigate this vulnerability, ensure that the application only binds to specific, trusted network interfaces. This typically means binding to `127.0.0.1` for local-only access or explicitly specifying the desired network interface IP address.\n\n### Source Code Fix Recommendation\n\nIn the provided code snippet, the default binding address is set based on whether the application is running in a Docker environment. To mitigate the vulnerability, consider using environment variables or configuration files to specify the binding address, ensuring it is not inadvertently set to `0.0.0.0` unless explicitly required and secured.\n\n```python\nimport os\n\ndef running_in_docker():\n    # Implement your logic to determine if running in Docker\n    return os.path.exists('/.dockerenv')\n\n# Use environment variable or configuration to set the default address\ndefault_address = os.getenv('BIND_ADDRESS', '127.0.0.1')\n\n# Fallback to 0.0.0.0 only if explicitly set in the environment\nif running_in_docker() and default_address == '127.0.0.1':\n    default_address = '0.0.0.0'\n\n# Example usage\nprint(f\"Binding to address: {default_address}\")\n```\n\n### Library Dependencies\n\nThe code example provided does not require any additional library dependencies beyond Python's standard library.\n\n### OWASP Resources\n\n- [OWASP Top Ten](https://owasp.org/www-project-top-ten/)\n- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n\n### Common Weakness Enumeration (CWE)\n\n- [CWE-200: Exposure of Sensitive Information to an Unauthorized Actor](https://cwe.mitre.org/data/definitions/200.html)\n- [CWE-284: Improper Access Control](https://cwe.mitre.org/data/definitions/284.html)"
+              },
+              "properties": {
+                "tags": [
+                  "B104"
+                ]
+              }
+            }
+          ],
+          "language": "en-US",
+          "contents": [
+            "localizedData",
+            "nonLocalizedData"
+          ],
+          "isComprehensive": false
+        }
+      },
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "glog-6cf1915f-0b7b-4e6b-bbf3-72ee01ef6a1a",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Possible binding to all interfaces."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "freqtrade/configuration/deploy_config.py"
+                },
+                "region": {
+                  "startLine": 187,
+                  "startColumn": 68,
+                  "endLine": 187,
+                  "endColumn": 77,
+                  "snippet": {
+                    "text": "            \"default\": \"127.0.0.1\" if not running_in_docker() else \"0.0.0.0\",  # noqa: S104\n"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 186,
+                  "endLine": 188,
+                  "snippet": {
+                    "text": "            ),\n            \"default\": \"127.0.0.1\" if not running_in_docker() else \"0.0.0.0\",  # noqa: S104\n            \"when\": lambda x: x[\"api_server\"],\n"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "issue_severity": "MEDIUM",
+            "issue_confidence": "MEDIUM"
+          }
+        }
+      ],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}
